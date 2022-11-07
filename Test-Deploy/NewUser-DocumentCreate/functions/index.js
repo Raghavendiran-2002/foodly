@@ -8,7 +8,7 @@ exports.sendByeEmail = functions.auth.user().onCreate(async (user) => {
   const writeResult = await admin
     .firestore()
     .collection("usersCollection")
-    .add({ UID: user.uid, phone: user.email, createOn: user.createOn });
+    .add({UID: user.uid, phone: user.email, createOn: user.createOn});
 
   return writeResult.then(() => {
     console.log("Succesfully Created Document");
