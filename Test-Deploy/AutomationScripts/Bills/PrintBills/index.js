@@ -15,8 +15,8 @@ async function makeBill() {
   let doc1 = new PDFDocument({ margin: 50 });
   generateHeader(doc1);
   generateFooter(doc1);
-  generateTableRow(docs, 2, "gfdh", "piou9", "cl3;guer", "h5yij", "jkiumy");
-  docs.end();
+  generateTableRow(doc1, 2, "gfdh", "piou9", "cl3;guer", "h5yij", "jkiumy");
+  doc1.end();
 }
 
 // var completed = false;
