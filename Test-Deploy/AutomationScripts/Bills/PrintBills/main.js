@@ -5,19 +5,14 @@ const { resolve } = require("path");
 const { rejects } = require("assert");
 
 // Create a document
-const doc = new PDFDocument();
+const doc = new PDFDocument({ size: "A5" });
 count = 5;
 
 // Pipe its output somewhere, like to a file or HTTP response
 // See below for browser usage
 doc.pipe(fs.createWriteStream(`${5}output.pdf`));
-doc.text("Hello world! dshdh", 150, 150);
 
 var p = new Promise((resolve, rejects) => {
-  //   data1 = "None";
-  //   let doc1 = new PDFDocument({ margin: 50 });
-  //   count = 1;
-
   axios
     .get(
       `https://us-central1-cloudfunctionsrestapi.cloudfunctions.net/widgets/${count}`
@@ -30,59 +25,58 @@ var p = new Promise((resolve, rejects) => {
         rejects("Failed");
       } else {
         resolve("Success");
-        doc.text("Hello world!", 200, 200);
-        console.log(myJSON);
-        doc.fontSize(25).text(`${myJSON}`, 240, 240);
+        generateHeader(doc);
+        generateTableRow(
+          doc,
+          250,
+          `${data1["OrderItem"]}`,
+          `${data1["quantiuiy"]}`,
+          "cl3;guer",
+          "h5yij",
+          "jkiumy",
+          `${data1["tokenNumber"]}`
+        );
+        console.log(data1["OrderItem"]);
+        // doc.fontSize(25).text(`${myJSON}`, 240, 240);
+        generateFooter(doc);
         doc.end();
       }
-      //   generateHeader(doc);
-
-      console.log(data1);
-      //   generateTableRow(
-      //     doc,
-      //     // data["tokenNumber"],
-
-      //     3,
-      //     "Dosa",
-      //     "Dfd",
-      //     "fdg",
-      //     // data["OrderItem"],
-      //     // data["quantity"],
-      //     data1,
-      //     "jkiumy"
-      //   );
-      //   generateFooter(doc);
     });
 });
 
 function generateHeader(doc) {
   doc
-    // .image("logo.png", 50, 45, { width: 50 })
     .fillColor("#444444")
     .fontSize(20)
-    .text("ACME Inc.", 110, 57)
+    .text("NEW KRISHNA CANTEEN", 100, 50, { align: "center" })
     .fontSize(10)
-    .text("123 Main Street", 200, 65, { align: "right" })
-    .text("New York, NY, 10025", 200, 80, { align: "right" })
+    .text("Institutional Food Court", 120, 70, { align: "center" })
+    .text("SASTRA University", 120, 80, { align: "center" })
+    .text("Thrirumalaisamudram, Thanjavur-613401", 120, 90, { align: "center" })
+    .text("Phone No : 9003453105", 120, 100, { align: "center" })
+    .text("GSTIN No : 33BDGL783456HFD", 120, 110, { align: "center" })
+    .text(
+      "-------------------------------------------------------------------------------",
+      80,
+      120,
+      { align: "left" }
+    )
     .moveDown();
 }
 
 function generateFooter(doc) {
   completed = false;
   doc
+    .fillColor("#444444")
     .fontSize(10)
-    .text(
-      "Payment is due within 15 days. Thank you for your business.",
-      50,
-      780,
-      { align: "center", width: 500 }
-    );
+    .text("Thank You Visit Again", 70, 500, { align: "center" });
 }
 
 // var po = ["pqe", "t4yercv", "jvp043u", "f34fg5", "grt45fb";
-function generateTableRow(doc, y, c1, c2, c3, c4, c5) {
+function generateTableRow(doc, y, c1, c2, c3, c4, c5, tk) {
+  doc.fontSize(20).text(`Token No : ${tk}`, 120, 130, { align: "center" });
   doc
-    // .fontSize(10)
+    .fontSize(10)
     .text(c1, 50, y)
     .text(c2, 150, y)
     .text(c3, 280, y, { width: 90, align: "right" })
