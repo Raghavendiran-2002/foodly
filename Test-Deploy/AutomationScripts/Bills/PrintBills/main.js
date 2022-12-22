@@ -1,8 +1,6 @@
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const axios = require("axios");
-const { resolve } = require("path");
-const { rejects } = require("assert");
 
 // Create a document
 const doc = new PDFDocument({ size: "A5" });
@@ -26,16 +24,40 @@ var p = new Promise((resolve, rejects) => {
       } else {
         resolve("Success");
         generateHeader(doc);
+        lenBtw = 180;
         generateTableRow(
           doc,
-          250,
-          `${data1["OrderItem"]}`,
-          `${data1["quantiuiy"]}`,
-          "cl3;guer",
-          "h5yij",
+          160,
+          "OrderItem",
+          "Quantity",
+          "Rate",
+          "Amount",
           "jkiumy",
-          `${data1["tokenNumber"]}`
+          "tokenNumber"
         );
+        for (i = 0; i <= 5; i++) {
+          generateTableRow(
+            doc,
+            lenBtw,
+            `${data1["OrderItem"]}`,
+            `${data1["quantiuiy"]}`,
+            "cl3;guer",
+            "h5yij",
+            "jkiumy",
+            `${data1["tokenNumber"]}`
+          );
+          lenBtw += 20;
+        }
+        // generateTableRow(
+        //   doc,
+        //   300,
+        //   "fhdhdf",
+        //   ";dfhg",
+        //   "cl3;guer",
+        //   "h5yij",
+        //   "jkiumy",
+        //   "jfdhgdflgh"
+        // );
         console.log(data1["OrderItem"]);
         // doc.fontSize(25).text(`${myJSON}`, 240, 240);
         generateFooter(doc);
@@ -78,21 +100,15 @@ function generateTableRow(doc, y, c1, c2, c3, c4, c5, tk) {
   doc
     .fontSize(10)
     .text(c1, 50, y)
-    .text(c2, 150, y)
-    .text(c3, 280, y, { width: 90, align: "right" })
-    .text(c4, 370, y, { width: 90, align: "right" })
+    .text(c2, 100, y)
+    .text(c3, 150, y) // { width: 90, align: "right" })
+    .text(c4, 200, y) //{ width: 90, align: "right" })
     .text(c5, 0, y, { align: "right" });
 }
 
-// while (count < 2) {
-
-//   count++;
-// }
 p.then((message) => {
   console.log("This is Then " + message);
   //   doc.end();
 }).catch((message) => {
   console.log("This is catch " + message);
 });
-// doc.end();
-// doc.end();
