@@ -9,6 +9,7 @@ const {
   FieldValue,
 } = require("firebase-admin/firestore");
 
+const bill = require("./billingTemplate.js");
 const { jsPDF } = require("jspdf");
 const serviceAccount = require("./foodly.json");
 
@@ -34,6 +35,12 @@ db.collection("vendors")
     querySnapshot.docChanges().forEach((change) => {
       if (change.type === "added") {
         console.log(`Order ${i}: `, change.doc.data());
+        bill.generateBill(
+          "23",
+          change.doc.data()["secretKey"],
+          change.doc.data()["orderItems"],
+          change.doc.data()["totalAmount"]
+        );
         i++;
       }
     });

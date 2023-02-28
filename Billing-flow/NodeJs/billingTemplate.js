@@ -1,15 +1,14 @@
 const { jsPDF } = require("jspdf");
 const date = require("date-and-time");
 
-function generateBill(tk_no, code) {
+function generateBill(tk_no, code, OrderItems, totalAmount) {
   const now = new Date();
   var dateNow = date.format(now, "YYYY/MM/DD HH:mm:ss");
-  const doc = new jsPDF("p", "mm", [72, 210]);
-  // doc.text("Hello world!", 1, 1);
+  const doc = new jsPDF("p", "mm", [72, 80 + 3 * OrderItems.length]);
   doc
     .setFontSize(12)
     .setFont(undefined, "bold")
-    .text(`Token No: ${tk_no}            Pin: ${code}`, 35, 6, {
+    .text(`Token No: ${tk_no}         Pin: ${code} `, 35, 6, {
       align: "center",
     });
 
@@ -33,7 +32,7 @@ function generateBill(tk_no, code) {
       36,
       { align: "left" }
     );
-  generateRow(doc, 39, "Product", "Quantity", "Rate", "Amount");
+  generateRow(doc, 39, "Product", "Qty", "Rate", "Amount");
   doc.text(
     "-------------------------------------------------------------------------------",
     2,
@@ -41,8 +40,15 @@ function generateBill(tk_no, code) {
     { align: "left" }
   );
   var lenBtw = 45;
-  for (i = 0; i <= 5; i++) {
-    generateItems(doc, lenBtw, `Dosa`, "4", "40.00", "244");
+  for (i = 0; i < OrderItems.length; i++) {
+    generateItems(
+      doc,
+      lenBtw,
+      `${OrderItems[i]["foodItemName"]}`,
+      `${OrderItems[i]["quantity"]}`,
+      `${OrderItems[i]["rate"]}`,
+      `${OrderItems[i]["rate"] * OrderItems[i]["quantity"]}`
+    );
     lenBtw += 4;
   }
   doc.text(
@@ -52,18 +58,25 @@ function generateBill(tk_no, code) {
     { align: "left" }
   );
   doc
-    .text("Qty : 3             STotal  : 124.34", 15, lenBtw + 3)
+    .text(
+      `Qty : ${OrderItems.length}             STotal  : 124.34`,
+      15,
+      lenBtw + 3
+    )
     .text("                       SGST   : 3.53", 15, lenBtw + 6)
     .text("                       CGST   : 4.34", 15, lenBtw + 9)
     .setFont(undefined, "bold")
     .setFontSize(10)
-    .text("Net : 135.00", 35, lenBtw + 15, { align: "center" })
+    .text(`Net : ${totalAmount}`, 35, lenBtw + 15, {
+      align: "center",
+    })
     .setFont(undefined, "normal");
   doc
-    // .fillColor("#444444")
     .setFontSize(10)
     .text("Thank You Visit Again", 35, lenBtw + 20, { align: "center" });
-  doc.save("./two-by-four.pdf");
+  console.log("****************");
+  console.log(lenBtw + 30);
+  doc.save(`./bills/${code}.pdf`);
 }
 
 function generateItems(doc, y, c1, c2, c3, c4) {
@@ -72,18 +85,19 @@ function generateItems(doc, y, c1, c2, c3, c4) {
     .setFont(undefined, "bold")
     .text(c1, 5, y)
     .setFont(undefined, "normal")
-    .text(c2, 28, y)
-    .text(c3, 40, y)
-    .text(c4, 55, y);
+    .text(c2, 45, y)
+    .text(c3, 50, y)
+    .text(c4, 57, y);
 }
 function generateRow(doc, y, c1, c2, c3, c4) {
   doc
     .setFontSize(7)
     .setFont(undefined, "bold")
     .text(c1, 5, y)
-    .text(c2, 28, y)
-    .text(c3, 40, y)
-    .text(c4, 55, y)
+    .text(c2, 43, y)
+    .text(c3, 49, y)
+    .text(c4, 58, y)
     .setFont(undefined, "normal");
 }
-generateBill(1, "av23");
+
+module.exports = { generateBill };
