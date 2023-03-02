@@ -29,5 +29,12 @@ exports.billNumber = functions.firestore
         console.log("Added Token");
       });
     tokenNo++;
-    return tokenNo;
+    return null;
+  });
+
+exports.moveExpiredDocuments = functions.pubsub
+  .schedule("0 0 * * *") // https://crontab.guru/#*_*_*_*_*
+  .onRun(async (context) => {
+    tokenNo = 1;
+    return null;
   });

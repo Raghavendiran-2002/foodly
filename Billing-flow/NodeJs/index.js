@@ -31,12 +31,13 @@ db.collection("vendors")
     kitchenID: "UuX6MIQIMe3shigJ0fbD",
     receiptPrinted: false,
   })
+  .orderBy("tokenNo")
   .onSnapshot((querySnapshot) => {
     querySnapshot.docChanges().forEach((change) => {
       if (change.type === "added") {
         console.log(`Order ${i}: `, change.doc.data());
         bill.generateBill(
-          "23",
+          change.doc.data()["tokenNo"],
           change.doc.data()["secretKey"],
           change.doc.data()["orderItems"],
           change.doc.data()["totalAmount"]
