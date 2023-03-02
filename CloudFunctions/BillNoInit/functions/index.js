@@ -24,7 +24,7 @@ exports.generateBillNumber = functions.firestore
         })
         .then((orderNo) => {
           var data = {
-            tokenNo: `${orderNo}`,
+            sequentialOrderNumber: `${orderNo}`,
           };
           db.collection("vendors")
             .doc("U6FKmkY682MEy8LlDIiX")
@@ -52,7 +52,7 @@ exports.billingCompleted = functions.firestore
     });
     if (res) {
       var data = {
-        isAllOrdersPlaced: `${res}`,
+        allReceiptsPrinted: res,
       };
       db.collection("vendors")
         .doc("U6FKmkY682MEy8LlDIiX")
