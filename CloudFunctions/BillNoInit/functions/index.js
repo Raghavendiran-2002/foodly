@@ -15,24 +15,26 @@ exports.generateBillNumber = functions.firestore
   .onCreate(async (snap, context) => {
     const getOrderNo = db.collection("vendors").doc("U6FKmkY682MEy8LlDIiX");
     try {
-      await db.runTransaction(async (transaction) => {
-        const doc = await transaction.get(getOrderNo);
-
-        const orderNo = doc.data().currentOrderCounter + 1;
-        var data = {
-          tokenNo: `${orderNo}`,
-        };
-        db.collection("vendors")
-          .doc("U6FKmkY682MEy8LlDIiX")
-          .collection("activeOrders")
-          .doc(`${snap.id}`)
-          .set(data, { merge: true })
-          .then((v) => {
-            console.log("Added Token");
-          });
-        transaction.update(getOrderNo, { currentOrderCounter: orderNo });
-        console.log(`Token Added ${orderNo}`);
-      });
+      await db
+        .runTransaction(async (transaction) => {
+          const doc = await transaction.get(getOrderNo);
+          const orderNo = doc.data().currentOrderCounter + 1;
+          transaction.update(getOrderNo, { currentOrderCounter: orderNo });
+          return orderNo;
+        })
+        .then((orderNo) => {
+          var data = {
+            tokenNo: `${orderNo}`,
+          };
+          db.collection("vendors")
+            .doc("U6FKmkY682MEy8LlDIiX")
+            .collection("activeOrders")
+            .doc(`${snap.id}`)
+            .set(data, { merge: true })
+            .then((v) => {
+              console.log(`Added Token ${orderNo}`);
+            });
+        });
       console.log("Transaction success!");
     } catch (e) {
       console.log("Transaction failure:", e);
@@ -40,12 +42,33 @@ exports.generateBillNumber = functions.firestore
     return null;
   });
 
-// exports.billingStatus = functions.firestore
-//   .document("vendors/{U6FKmkY682MEy8LlDIiX}/activeOrders/{qwe}")
-//   .onUpdate((change, context) => {
-//     // const newValue = change.after.data();
-//     // const previousValue = change.before.data();
-//   });
+exports.billingCompleted = functions.firestore
+  .document("vendors/{U6FKmkY682MEy8LlDIiX}/activeOrders/{qwe}")
+  .onUpdate((change, context) => {
+    const newValue = change.after.data();
+    var res = false;
+    newValue.kitchens.forEach((element) => {
+      res = element.receiptPrinted;
+    });
+    if (res) {
+      var data = {
+        isAllOrdersPlaced: `${res}`,
+      };
+      db.collection("vendors")
+        .doc("U6FKmkY682MEy8LlDIiX")
+        .collection("activeOrders")
+        .doc(`${change.after.id}`)
+        .set(data, { merge: true })
+        .then((v) => {
+          console.log(`Printed Orders ${res}`);
+        });
+    }
+    // if(newValue.kitchens[0].receiptPrinted == true){
+    // }
+    // console.log(newValue.kitchens[0].kitchenID);
+    // const previousValue = change.before.data();
+    return null;
+  });
 
 // exports.moveExpiredDocuments = functions.pubsub
 //   .schedule("0 0 * * *") // https://crontab.guru/#*_*_*_*_*
