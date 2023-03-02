@@ -9,37 +9,25 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
-
-exports.createUser = functions.firestore
-  .document("users/{'qwe'}")
+var tokenNo = 1;
+exports.billNumber = functions.firestore
+  .document("vendors/{U6FKmkY682MEy8LlDIiX}/activeOrders/{qwe}")
   .onCreate((snap, context) => {
-    // Get an object representing the document
-    // e.g. {'name': 'Marie', 'age': 66}
     const newValue = snap.data();
-    console.log(newValue);
-    // access a particular field as you would any JS property
-    // const name = newValue.name;
-    var tokenNo = 35;
-    db.doc("users/{'qwe}").update({
+    console.log("*****************************");
+    console.log(snap.id);
+    var data = {
       tokenNo: `${tokenNo}`,
-    });
-    // perform desired operations ...
+    };
+    db.collection("vendors")
+      .doc("U6FKmkY682MEy8LlDIiX")
+      .collection("activeOrders")
+      .doc(`${snap.id}`)
+      .set(data, { merge: true })
+      .then((v) => {
+        console.log(v);
+        console.log("Added Token");
+      });
+    tokenNo++;
+    return tokenNo;
   });
-
-// exports.useMultipleWildcards = functions.firestore
-//   .document("vendors/rew/poi")
-//   .onCreate((snap, context) => {
-//     // Get an object representing the document
-//     // e.g. {'name': 'Marie', 'age': 66}
-//     const newValue = snap.data();
-//     console.log(snap.data());
-
-//     // access a particular field as you would any JS property
-//     const name = newValue.name;
-//     db.doc("some/otherdoc").update({
-//       tokenNo: `${tokenNo}`,
-//     });
-//     console.log("************************************");
-//     console.log("Done");
-//     // perform desired operations ...
-//   });
