@@ -19,10 +19,6 @@ initializeApp({
 
 const db = getFirestore();
 
-// const doc = db
-//   .collection("vendors")
-//   .doc("U6FKmkY682MEy8LlDIiX")
-//   .collection("activeOrders");
 var i = 0;
 db.collection("vendors")
   .doc("U6FKmkY682MEy8LlDIiX")

@@ -63,13 +63,14 @@ exports.billingCompleted = functions.firestore
           console.log(`Printed Orders ${res}`);
         });
     }
-    // if(newValue.kitchens[0].receiptPrinted == true){
-    // }
-    // console.log(newValue.kitchens[0].kitchenID);
-    // const previousValue = change.before.data();
     return null;
   });
 
+exports.createUser = functions.auth.user().onCreate((user) => {
+  db.collection("users")
+    .doc(user.uid)
+    .add({ enabled: false, userUID: user.uid, vendorID: [] });
+});
 // exports.moveExpiredDocuments = functions.pubsub
 //   .schedule("0 0 * * *") // https://crontab.guru/#*_*_*_*_*
 //   .onRun(async (context) => {
