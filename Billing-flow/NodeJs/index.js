@@ -22,19 +22,19 @@ const db = getFirestore();
 var i = 0;
 db.collection("vendors")
   .doc("U6FKmkY682MEy8LlDIiX")
-  .collection("activeOrders") // UuX6MIQIMe3shigJ0fbD
+  .collection("orders") // UuX6MIQIMe3shigJ0fbD
   .where("kitchens", "array-contains", {
     kitchenID: "UuX6MIQIMe3shigJ0fbD",
     receiptPrinted: false,
   })
-  .orderBy("tokenNo")
+  .orderBy("sequentialOrderNumber")
   .onSnapshot((querySnapshot) => {
     querySnapshot.docChanges().forEach((change) => {
       var docID = change.doc.id;
       if (change.type === "added") {
         console.log(`Order ${i}: `, change.doc.data());
         bill.generateBill(
-          change.doc.data()["tokenNo"],
+          change.doc.data()["sequentialOrderNumber"],
           change.doc.data()["secretKey"],
           change.doc.data()["orderItems"],
           change.doc.data()["totalAmount"]
@@ -47,7 +47,7 @@ db.collection("vendors")
         });
         db.collection("vendors")
           .doc("U6FKmkY682MEy8LlDIiX")
-          .collection("activeOrders")
+          .collection("orders")
           .doc(`${docID}`)
           .update({
             kitchens: kitchenArray,
